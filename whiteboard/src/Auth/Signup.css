@@ -1,0 +1,349 @@
+body {
+  margin: 0;
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
+}
+
+.signup-root {
+  display: flex;
+  min-height: 100vh;
+  width: 100vw;
+  background: url("/signup-bg.jpg") center/cover no-repeat, #232333;
+}
+
+.signup-left {
+  flex: 1.1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 5vw;
+  color: #fff;
+  position: relative;
+  background: rgba(35, 35, 36, 0.62);
+}
+
+.signup-brand {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 3rem;
+  margin-top: 1.5rem;
+  letter-spacing: 0.02em;
+  color: #fff;
+}
+
+.signup-info h1 {
+  font-size: 2.4rem;
+  font-weight: 800;
+  margin-bottom: 1.4rem;
+  color: #fff;
+  line-height: 1.17;
+}
+
+.signup-info p {
+  color: #e0e0e0;
+  font-size: 1.12rem;
+  max-width: 34rem;
+  margin-bottom: 1.2rem;
+}
+
+.signup-copyright {
+  position: absolute;
+  left: 5vw;
+  bottom: 2.5rem;
+  font-size: 0.92rem;
+  color: #cccccc;
+}
+
+.signup-copyright a {
+  color: #fff;
+  opacity: 0.75;
+  text-decoration: underline;
+}
+
+.signup-right {
+  flex: 1;
+  min-width: 340px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.signup-card {
+  width: 100%;
+  max-width: 410px;
+  background: #fff;
+  border-radius: 2.7rem;
+  box-shadow: 0 8px 44px 0 rgba(0, 0, 0, 0.13);
+  padding: 2.6rem 2.2rem 1.6rem 2.2rem;
+  margin: 3.2rem 1vw;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  box-sizing: border-box;
+}
+
+.signup-heading {
+  font-size: 2.1rem;
+  margin-bottom: 1.16rem;
+  font-weight: 700;
+  color: #21243d;
+  line-height: 1.14;
+  max-width: 100%;
+  text-align: center;
+  padding: 0 0.5rem;
+  word-break: break-word;
+}
+
+.signup-card form {
+  display: flex;
+  flex-direction: column;
+}
+
+.signup-card input[type="email"],
+.signup-card input[type="password"] {
+  display: block;
+  width: 100%;
+  margin-bottom: 1rem;
+  padding: 0.85rem 1rem;
+  border: 1.4px solid #d5d5d5;
+  border-radius: 11px;
+  font-size: 1rem;
+  background: #fafafd;
+  transition: border-color 0.17s;
+}
+
+.signup-card input[type="email"]:focus,
+.signup-card input[type="password"]:focus {
+  border-color: #ffb6c4;
+  outline: none;
+}
+
+.signup-error {
+  color: #ff5679;
+  font-size: 0.97rem;
+  min-height: 1.15em;
+  margin-bottom: 1rem;
+  margin-top: -0.4rem;
+  text-align: left;
+}
+
+.signup-success {
+  color: #32cc70;
+  font-size: 1rem;
+  margin-bottom: 0.7rem;
+  text-align: center;
+}
+
+.signup-btn {
+  width: 100%;
+  background: #ff5f8f;
+  color: #fff;
+  font-size: 1.13rem;
+  font-weight: 700;
+  padding: 0.95rem 0;
+  border: none;
+  border-radius: 9px;
+  margin-bottom: 0.9rem;
+  cursor: pointer;
+  opacity: 0.9;
+  transition: filter 0.16s, opacity 0.18s;
+}
+.signup-btn:enabled:hover {
+  opacity: 1;
+  filter: brightness(0.97);
+}
+.signup-btn:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
+
+.signup-alt {
+  font-size: 1.01rem;
+  color: #868686;
+  margin-bottom: 0.7rem;
+  text-align: left;
+}
+.signup-alt a {
+  color: #ff5f8f;
+  text-decoration: underline;
+}
+
+.custom-toast {
+  position: fixed;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(90deg, #ff5f8f 70%, #9275ff 100%);
+  color: #fff;
+  font-size: 1.19rem;
+  font-weight: 600;
+  border-radius: 1.3rem;
+  padding: 1rem 2.2rem 1rem 1.5rem;
+  z-index: 9999;
+  box-shadow: 0 8px 40px 0 rgba(0, 0, 0, 0.11);
+  display: flex;
+  align-items: center;
+  animation: toast-fadein 0.5s;
+}
+
+@keyframes toast-fadein {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -20%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.custom-toast-close {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.6rem;
+  margin-left: 1.2rem;
+  cursor: pointer;
+  opacity: 0.75;
+  font-weight: bold;
+}
+
+.custom-toast-close:hover {
+  opacity: 1;
+}
+
+/* Responsive Styling */
+@media (max-width: 900px) {
+  .signup-root {
+    flex-direction: column;
+  }
+  .signup-left {
+    padding: 2.2rem 5vw 1.5rem 5vw;
+    align-items: center;
+    min-height: unset;
+    justify-content: flex-end;
+    text-align: center;
+  }
+  .signup-brand {
+    margin-bottom: 1.2rem;
+  }
+  .signup-info h1 {
+    font-size: 2rem;
+  }
+  .signup-right {
+    padding: 0;
+    margin: 0;
+  }
+  .signup-card {
+    margin: 2rem auto;
+  }
+  .signup-copyright {
+    position: static;
+    margin-top: 2.5rem;
+    text-align: center;
+  }
+}
+
+@media (max-width: 600px) {
+  .signup-root {
+    min-height: 100vh;
+  }
+  .signup-left {
+    padding: 1.2em 5vw 0.5em 5vw;
+    align-items: center;
+    text-align: center;
+  }
+  .signup-info h1 {
+    font-size: 1.15rem;
+    word-break: break-word;
+    max-width: 95vw;
+  }
+  .signup-info p {
+    font-size: 0.98rem;
+    max-width: 95vw;
+  }
+  .signup-right {
+    min-width: 0;
+    padding: 0;
+    margin: 0;
+  }
+  .signup-card {
+    max-width: 96vw;
+    margin: 1.5rem auto 0.5rem auto;
+    padding: 1.1rem 0.5rem;
+    border-radius: 1.08rem;
+    box-sizing: border-box;
+  }
+  .signup-heading {
+    font-size: 1.15rem;
+    max-width: 96vw;
+    word-break: break-word;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0;
+  }
+  .custom-toast {
+    position: fixed;
+    top: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(90deg, #ff5f8f 70%, #9275ff 100%);
+    color: #fff;
+    font-size: 1.19rem;
+    font-weight: 600;
+    border-radius: 1.3rem;
+    padding: 1rem 2.2rem 1rem 1.5rem;
+    z-index: 9999;
+    box-shadow: 0 8px 40px 0 rgba(0, 0, 0, 0.11);
+    display: flex;
+    align-items: center;
+    animation: toast-fadein 0.5s;
+  }
+
+  @keyframes toast-fadein {
+    from {
+      opacity: 0;
+      transform: translate(-50%, -20%);
+    }
+    to {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+  }
+
+  .custom-toast-close {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 1.6rem;
+    margin-left: 1.2rem;
+    cursor: pointer;
+    opacity: 0.75;
+    font-weight: bold;
+  }
+
+  .custom-toast-close:hover {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 420px) {
+  .signup-card {
+    border-radius: 0.4rem;
+    box-shadow: none;
+  }
+  .signup-info h1 {
+    font-size: 1rem;
+  }
+}
+
+.password-info {
+  font-size: 0.85rem;
+  color: #555;
+  margin-top: -0.3rem;
+  margin-bottom: 1rem;
+  opacity: 0.85;
+  line-height: 1.3;
+}
+

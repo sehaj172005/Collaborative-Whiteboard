@@ -1,0 +1,168 @@
+body {
+  margin: 0;
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+}
+
+.home-root {
+  min-height: 100vh;
+  width: 100vw;
+  background: url('/home-bg.jpg') center/cover no-repeat, #18171a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-x: hidden;
+  position: relative;
+}
+
+.home-navbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem 7vw 0 7vw;
+  z-index: 2;
+  box-sizing: border-box;
+}
+
+.home-brand {
+  font-size: 1.5rem;
+  font-weight: bold;
+  letter-spacing: 0.03em;
+  color: #fffafc;
+}
+
+.home-nav-btn {
+  margin-left: 1.5rem;
+  padding: 0.70rem 1.7rem;
+  background: #ff5f8f;
+  color: #fff;
+  border-radius: 0.7rem;
+  text-decoration: none;
+  font-weight: 600;
+  border: none;
+  font-size: 1rem;
+  transition: background 0.18s;
+}
+.home-nav-btn:hover {
+  background: #ff6ea9;
+}
+
+.home-main-card {
+  margin: 8.5rem auto 0 auto;
+  background: rgba(35, 39, 50, 0.88); /* Deep glassmorphic feel */
+  backdrop-filter: blur(19px);
+  border-radius: 2.5rem;
+  box-shadow: 0 10px 44px 0 rgba(0,0,0,0.18);
+  padding: 3.5rem 7vw 2.6rem 7vw;
+  max-width: 1320px;
+  width: min(95vw, 1320px);
+  min-width: 340px;
+  text-align: center;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  z-index: 1;
+}
+
+.home-title {
+  font-size: 2.4rem;
+  font-weight: 800;
+  margin-bottom: 1.35rem;
+  color: #fff;
+  line-height: 1.13;
+  word-break: break-word;
+}
+
+.home-desc {
+  color: #e1e1e3;
+  font-size: 1.15rem;
+  margin-bottom: 2.15rem;
+  font-weight: 500;
+}
+
+.home-go-btn {
+  background: #ff5f8f;
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.12rem;
+  border: none;
+  border-radius: 0.8rem;
+  text-decoration: none;
+  padding: 1.12rem 4.1rem;
+  margin-bottom: 2.1rem;
+  margin-top: 0.5rem;
+  box-shadow: 0 3px 14px 0 rgba(255,95,143,0.11);
+  transition: background 0.18s;
+  cursor: pointer;
+  display: inline-block;
+}
+.home-go-btn:hover {
+  background: #ff6ea9;
+}
+.home-image-placeholder {
+  width: 100%;
+  max-width: 100%;
+  background: rgba(40,40,48,0.23);
+  border-radius: 1.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #bdbad4;
+  font-size: 1.23rem;
+  margin-top: 0;
+  margin-bottom: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+  padding: 1rem;
+}
+
+.home-image-placeholder img {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  border-radius: 1rem;
+  object-fit: contain;
+}
+
+
+/* Responsive Breakpoints */
+/* Large screens: Keep content nicely centered */
+@media (min-width: 1440px) {
+  .home-main-card {
+    max-width: 980px;
+    padding: 3.5rem 0 2.6rem 0;
+  }
+}
+
+/* Adjust font sizes for headings responsively */
+.home-title {
+  font-size: clamp(1.2rem, 4vw, 2.5rem);
+}
+
+/* Better scaling for mobile */
+@media (max-width: 420px) {
+  .home-main-card {
+    padding: 0.65rem 0.2rem 0.6rem 0.2rem;
+    border-radius: 0.43rem;
+  }
+  .home-desc {
+    font-size: 0.93rem;
+  }
+  .home-go-btn {
+    padding: 0.82rem 1.2rem;
+    font-size: 0.97rem;
+  }
+}
+
+/* Improve navigation stacking for smallest screens */
+@media (max-width: 600px) {
+  .home-navbar {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem 3vw 0 3vw;
+    gap: 0.8rem;
+  }
+}
