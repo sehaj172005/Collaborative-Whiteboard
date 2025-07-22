@@ -23,21 +23,19 @@ A **real-time collaborative whiteboard** application built with React, Redux, So
 git clone https://github.com/yourusername/collaborative-whiteboard.git
 cd collaborative-whiteboard
 
-text
+
 
 2. Backend setup:
 cd server
 npm install
 
-text
 Create a `.env` file with:
 MONGODB_URL=your_mongo_connection_string
 JWT_USER_SECRET=your_jwt_secret
 PORT=3000
 
-text
 Start backend server:
-npm start
+npm run dev
 
 text
 
