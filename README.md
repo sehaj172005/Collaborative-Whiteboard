@@ -26,6 +26,7 @@ cd collaborative-whiteboard
 
 
 2. Backend setup:
+   
 cd server
 npm install
 
@@ -34,10 +35,9 @@ MONGODB_URL=your_mongo_connection_string
 JWT_USER_SECRET=your_jwt_secret
 PORT=3000
 
-Start backend server:
-npm run dev
+  Start backend server:
+  npm run dev
 
-text
 
 3. Frontend setup:
 cd ../client
