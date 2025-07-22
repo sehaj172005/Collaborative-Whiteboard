@@ -3,7 +3,7 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Whiteboard from "./Whiteboard/WhiteBoard"
 import HomePage from "./Home/Home"
-import SignIn from "./Auth/SignIn";
+import SignIn from "./Auth/Signin";
 import Signup from "./Auth/Signup";
 
 const App = () => {
