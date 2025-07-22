@@ -9,7 +9,7 @@ import { createElement } from "../Whiteboard/utils/createElement";
 import { updateElement } from "../Whiteboard/utils/updateElements";
 import { DrawElements } from "../Whiteboard/utils/drawElements";
 import { AdjustCoordinates } from "../Whiteboard/utils/AdjustCordinates";
-import { getElementPosition } from "./utils/getElementposition";
+import { getElementPosition } from "./utils/getElementPosition";
 import { GetCursortype } from "./utils/Getcursortype";
 import { Getelementcoordinates } from "./utils/Getelementcoordinates";
 import {
