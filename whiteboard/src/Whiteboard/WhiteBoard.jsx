@@ -216,6 +216,7 @@ function Whiteboard() {
               type: selectedEl.type,
               index,
               id: selectedEl.id,
+              text: elements[index].text,
             },
             elements,
             dispatch
