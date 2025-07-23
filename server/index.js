@@ -4,6 +4,7 @@ const http = require('http');
 const { Server } = require('socket.io');
 require('dotenv').config();
 const mongoose = require('mongoose');
+const path = require("path");
 
 const mongodb_url = process.env.MONGODB_URL;
 
@@ -59,6 +60,12 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     console.log(`[-] Disconnected: ${socket.id}`);
   });
+});
+
+app.use(express.static(path.join(__dirname, "client", "build")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "client", "build", "index.html"));
 });
 
 
