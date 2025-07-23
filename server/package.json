@@ -5,8 +5,8 @@
   "scripts": {
     "dev": "nodemon index.js",
     "start": "node index.js",
-    "build-client": "cd client && npm install && npm run build",
-    "postinstall": "npm run build-client",
+    "build-whiteboard": "cd ../whiteboard && npm install && npm run build",
+    "postinstall": "npm run build-whiteboard",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
