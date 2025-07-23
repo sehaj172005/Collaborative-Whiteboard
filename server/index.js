@@ -1,9 +1,9 @@
-const express = require('express');
-const cors = require('cors');
-const http = require('http');
-const { Server } = require('socket.io');
-require('dotenv').config();
-const mongoose = require('mongoose');
+const express = require("express");
+const cors = require("cors");
+const http = require("http");
+const { Server } = require("socket.io");
+require("dotenv").config();
+const mongoose = require("mongoose");
 const path = require("path");
 
 const mongodb_url = process.env.MONGODB_URL;
@@ -12,13 +12,13 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: '*',
-    methods: ['GET', 'POST']
-  }
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
 });
 
 app.use(express.json());
-app.use(cors({ origin: '*', methods: ['GET', 'POST'] }));
+app.use(cors({ origin: "*", methods: ["GET", "POST"] }));
 
 // Import Routes
 const Userroutes = require("./routes/user");
@@ -63,7 +63,12 @@ io.on("connection", (socket) => {
 });
 
 
+// Serve static files
+app.use(express.static(path.join(__dirname, "dist")));
 
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "dist", "index.html"));
+});
 
 const PORT = process.env.PORT || 3000;
 
