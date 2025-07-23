@@ -10,7 +10,7 @@ export const Socketconnfunction = (roomId) => {
   roomIdGlobal = roomId;
 
   if (!socket || !socket.connected) {
-    socket = io("http://localhost:3000");
+    socket = io("https://collaborative-whiteboard-hv0h.onrender.com");
 
     socket.on("connect", () => {
       console.log(`🟢 Connected with socket id ${socket.id}`);
