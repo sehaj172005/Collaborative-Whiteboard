@@ -4,7 +4,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon index.js",
-    "start": "node index.js", 
+    "start": "node index.js",
+    "build-client": "cd client && npm install && npm run build",
+    "postinstall": "npm run build-client",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

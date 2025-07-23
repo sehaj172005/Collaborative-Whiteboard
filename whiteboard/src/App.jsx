@@ -13,7 +13,6 @@ const App = () => {
         <Route path="/" element={<HomePage />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<Signup />} />
-        {/* 🟩 Support both classic and room-based routes */}
         <Route path="/whiteboard" element={<Whiteboard />} />
         <Route path="/whiteboard/:roomId" element={<Whiteboard />} />
       </Routes>
