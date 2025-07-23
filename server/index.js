@@ -4,7 +4,7 @@ const http = require('http');
 const { Server } = require('socket.io');
 require('dotenv').config();
 const mongoose = require('mongoose');
-const path = require("path");
+
 
 const mongodb_url = process.env.MONGODB_URL;
 
@@ -62,11 +62,7 @@ io.on("connection", (socket) => {
   });
 });
 
-app.use(express.static(path.join(__dirname, "client", "build")));
 
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "client", "build", "index.html"));
-});
 
 
 const PORT = process.env.PORT || 3000;
