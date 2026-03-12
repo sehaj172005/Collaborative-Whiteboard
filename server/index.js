@@ -13,6 +13,7 @@ const server = http.createServer(app);
 const allowedOrigins = [
   "http://localhost:5173", // Local frontend
   "https://collaborative-whiteboard-hv0h.onrender.com", // If serving frontend from same backend
+  "https://collaborative-whiteboard-1-l20r.onrender.com", // Exact React Frontend URL
   process.env.FRONTEND_URL, // Dynamic exact frontend URL
 ].filter(Boolean);
 
