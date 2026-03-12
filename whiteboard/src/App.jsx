@@ -1,8 +1,8 @@
 // App.jsx
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Whiteboard from "./Whiteboard/WhiteBoard"
-import HomePage from "./Home/Home"
+import Whiteboard from "./Whiteboard/WhiteBoard";
+import HomePage from "./Home/Home";
 import SignIn from "./Auth/Signin";
 import Signup from "./Auth/Signup";
 
@@ -13,6 +13,7 @@ const App = () => {
         <Route path="/" element={<HomePage />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<Signup />} />
+        {/* Anyone can use the whiteboard — sign-in only required for sharing */}
         <Route path="/whiteboard" element={<Whiteboard />} />
         <Route path="/whiteboard/:roomId" element={<Whiteboard />} />
       </Routes>

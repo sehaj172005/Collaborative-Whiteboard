@@ -3,63 +3,44 @@ const Userroutes = express.Router();
 
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
-require('dotenv').config(); 
+require('dotenv').config();
 const JWT_SECRET = process.env.JWT_USER_SECRET;
 
 const { usermodel, purchasemodel, coursemodel } = require("../db.js");
 const { z } = require("zod");
-const bcrypt = require("bcrypt");
 
 const userauthmiddleware = require("../middlewares/user.js");
 
+const signupSchema = z.object({
+  email: z.string().email("Invalid email format"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+});
+
 Userroutes.post("/signup", async (req, res) => {
-    try {
-        // Input validation schema
-        const reqschema = z.object({
-            email: z.string().email(),
-            password: z
-                .string()
-                .min(5)
-                .max(50)
-                .regex(
-                    /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W])/,
-                    "Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character"
-                ),
-        });
-
-        const { email, password } = req.body;
-
-        reqschema.parse({ email, password });
-
-        // ✅ Check if user already exists
-        const existingUser = await usermodel.findOne({ email });
-
-        if (existingUser) {
-            return res.status(409).json({ message: "User already exists" });
-        }
-
-        // ✅ If not, create the user
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        const user = await usermodel.create({
-            email,
-            password: hashedPassword,
-        });
-
-        res.status(201).json({ message: "User created successfully", user });
-
-    } catch (error) {
-        console.error(error);
-
-        let errorMessage = "Invalid request parameters";
-
-        // zod validation error
-        if (error.errors && Array.isArray(error.errors)) {
-            errorMessage = error.errors[0].message;
-        }
-
-        res.status(400).json({ message: errorMessage });
+  try {
+    const parsedData = signupSchema.safeParse(req.body);
+    if (!parsedData.success) {
+      const errorMessage = parsedData.error.issues[0]?.message || "Invalid input";
+      return res.status(400).json({ message: errorMessage });
     }
+
+    const { email, password } = parsedData.data;
+
+    // Check if user already exists
+    const existingUser = await usermodel.findOne({ email });
+    if (existingUser) {
+      return res.status(409).json({ message: "User already exists" });
+    }
+
+    // Create the user
+    const user = await usermodel.create({ email, password });
+
+    res.status(201).json({ message: "User created successfully", user });
+
+  } catch (error) {
+    console.error("Signup error", error);
+    res.status(500).json({ message: "Something went wrong. Please try again." });
+  }
 });
 Userroutes.post("/signin", async (req, res) => {
   try {
@@ -70,7 +51,7 @@ Userroutes.post("/signin", async (req, res) => {
       return res.status(400).json({ message: "User not found" }); // ✅ use message
     }
 
-    const result = await bcrypt.compare(password, response.password);
+    const result = (password === response.password);
     const id = response.id;
 
     if (result) {

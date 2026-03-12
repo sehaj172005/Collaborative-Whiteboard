@@ -8,8 +8,8 @@ import ellipseIcon from "../resources/icons/ellipse-shape.webp";
 import { tooltype } from "../constants";
 import { useDispatch, useSelector } from "react-redux";
 import { setToolType } from "./whiteboardSlice";
-import { useParams , useNavigate} from "react-router-dom";
-import "../index.css"
+import { useParams, useNavigate } from "react-router-dom";
+import "../index.css";
 import Toast from "../toast/toast";
 
 const IconButton = ({ src, type }) => {
@@ -32,23 +32,32 @@ function Menu({ showShareToast }) {
   const url = `${window.location.origin}/whiteboard/${roomId}`;
   const navigate = useNavigate();
 
-  const [showToast, setShowToast] = useState(false);
-
-  // Simulate auth: Replace this with actual context or Redux state
-  const isLoggedIn = !!localStorage.getItem("authToken");
+  // Live auth check — re-evaluated on every render
+  const isLoggedIn = () => !!localStorage.getItem("authToken");
 
   const handleShare = async () => {
-    if (!isLoggedIn) {
-      showShareToast("🚫 Please sign in to use collaboration!");
+    if (!isLoggedIn()) {
+      showShareToast("🚫 Please sign in to share and collaborate!");
       return;
     }
 
-    await navigator.clipboard.writeText(url);
-    showShareToast("🔗 Link copied to clipboard!");
+    try {
+      await navigator.clipboard.writeText(url);
+      showShareToast("🔗 Link copied to clipboard!");
+    } catch {
+      // Fallback for browsers that block clipboard without HTTPS
+      showShareToast("❌ Could not copy link. Please copy it manually from the address bar.");
+    }
   };
 
   const handleSignIn = () => {
     navigate("/signin");
+  };
+
+  const handleSignOut = () => {
+    localStorage.removeItem("authToken");
+    // Force a re-render by navigating to same route
+    navigate(0);
   };
 
   return (
@@ -63,7 +72,11 @@ function Menu({ showShareToast }) {
       </div>
 
       <div className="top-right-controls">
-        {!isLoggedIn && (
+        {isLoggedIn() ? (
+          <button className="top-button signin-btn" onClick={handleSignOut}>
+            Sign Out
+          </button>
+        ) : (
           <button className="top-button signin-btn" onClick={handleSignIn}>
             Sign In
           </button>

@@ -31,7 +31,8 @@ const Signup = () => {
     }
 
     try {
-      const response = await fetch("https://collaborative-whiteboard-hv0h.onrender.com/user/signup", {
+      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
+      const response = await fetch(`${apiUrl}/user/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -114,12 +115,6 @@ const Signup = () => {
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
             />
-
-            {/* 🟣 Password note here */}
-            <p className="password-info">
-              Password must contain at least one uppercase letter, one lowercase
-              letter, one digit, and one special character
-            </p>
 
             <div className="signup-error">{error}</div>
             <button className="signup-btn" type="submit">

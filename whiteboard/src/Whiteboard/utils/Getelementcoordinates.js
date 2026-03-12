@@ -13,7 +13,7 @@ export const Getelementcoordinates = (element, clientX, clientY) => {
     case positions.END:
     case positions.BOTTOM_RIGHT:
       return { x1, y1, x2: clientX, y2: clientY };
-    
-    defualt: return null;
+
+    default: return null;
   }
 };

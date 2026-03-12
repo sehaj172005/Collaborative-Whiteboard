@@ -22,62 +22,24 @@ export const generateLine = ({ x1, y1, x2, y2 }) => {
 };
 
 export const createElement = ({ x1, y1, x2, y2, id, type, text }) => {
-  console.log("createElement called with:", { x1, y1, x2, y2, id, type, text });
-
   switch (type) {
-    case tooltype.RECTANGLE:
+    case tooltype.RECTANGLE: {
       const roughElement = generateRectangle({ x1, y1, x2, y2 });
-      const element = {
-        id,
-        type,
-        roughElement,
-        x1,
-        y1,
-        x2,
-        y2,
-      };
-      console.log("Created rectangle element:", element);
-      return element;
+      return { id, type, roughElement, x1, y1, x2, y2 };
+    }
 
-    case tooltype.LINE:
+    case tooltype.LINE: {
       const lineRoughElement = generateLine({ x1, y1, x2, y2 });
-      const lineElement = {
-        id,
-        type,
-        roughElement: lineRoughElement,
-        x1,
-        y1,
-        x2,
-        y2,
-      };
-      console.log("Created line element:", lineElement);
-      return lineElement;
+      return { id, type, roughElement: lineRoughElement, x1, y1, x2, y2 };
+    }
 
     case tooltype.TEXT:
-      const textElement = {
-        id,
-        type,
-        x1,
-        y1,
-        x2,
-        y2,
-        text: text || "",
-      };
-      console.log("Created text element:", textElement);
-      return textElement;
+      return { id, type, x1, y1, x2, y2, text: text || "" };
 
-    case tooltype.ELLIPSE:
+    case tooltype.ELLIPSE: {
       const ellipseRoughElement = generateEllipse({ x1, y1, x2, y2 });
-      const ellipseElement = {
-        id,
-        type,
-        roughElement: ellipseRoughElement,
-        x1,
-        y1,
-        x2,
-        y2,
-      };
-      return ellipseElement;
+      return { id, type, roughElement: ellipseRoughElement, x1, y1, x2, y2 };
+    }
 
     default:
       throw new Error(`SOMETHING WENT WRONG - unsupported type: ${type}`);

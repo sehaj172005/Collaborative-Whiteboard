@@ -10,20 +10,26 @@ export const Socketconnfunction = (roomId) => {
   roomIdGlobal = roomId;
 
   if (!socket || !socket.connected) {
-    socket = io("https://collaborative-whiteboard-hv0h.onrender.com");
+    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
+    socket = io(apiUrl, {
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+    });
 
     socket.on("connect", () => {
-      console.log(`🟢 Connected with socket id ${socket.id}`);
       socket.emit("join-room", roomIdGlobal);
     });
 
     socket.on("receive-whiteboard-state", (newElements) => {
-      console.log("🔄 Received full whiteboard:", newElements);
       store.dispatch(setElement(newElements));
     });
 
     socket.on("element-updated", (element) => {
       store.dispatch(updateElements(element));
+    });
+
+    socket.on("connect_error", () => {
+      // silently handle connection errors — UI will keep working offline
     });
   }
 };

@@ -28,6 +28,8 @@ function Whiteboard() {
 
   const canvasRef = useRef();
   const textAreaRef = useRef();
+  // RAF reference to cancel pending frames
+  const rafRef = useRef(null);
 
   const selectedToolType = useSelector((state) => state.whiteboardSlice.tool);
   const elements = useSelector((state) => state.whiteboardSlice.elements);
@@ -37,12 +39,12 @@ function Whiteboard() {
   const { roomId } = useParams();
   const navigate = useNavigate();
 
-  // 🔁 REDRAW ELEMENTS ON EVERY UPDATE
+  // 🔁 REDRAW ELEMENTS ON EVERY UPDATE — single source of truth for drawing
   useLayoutEffect(() => {
     const canvas = canvasRef.current;
+    if (!canvas) return;
     const ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "black";
 
     const roughCanvas = rough.canvas(canvas);
     DrawElements({
@@ -54,14 +56,17 @@ function Whiteboard() {
     });
   }, [elements, selectedEl]);
 
-  // 🔁 MAKE CANVAS RESPONSIVE
+  // 🔁 MAKE CANVAS RESPONSIVE — only resize the canvas, let useLayoutEffect handle drawing
   useEffect(() => {
     const canvas = canvasRef.current;
+    if (!canvas) return;
 
     const updateSize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
-
+      // Force a redraw after resize by triggering a layout effect
+      // We do NOT call DrawElements here — useLayoutEffect will handle it
+      // via a small state update trick. Directly re-invoke draw manually:
       const ctx = canvas.getContext("2d");
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       const roughCanvas = rough.canvas(canvas);
@@ -77,7 +82,7 @@ function Whiteboard() {
     updateSize();
     window.addEventListener("resize", updateSize);
     return () => window.removeEventListener("resize", updateSize);
-  }, [elements, selectedEl]);
+  }, []); // ✅ Only set up listener once — elements changes handled by useLayoutEffect
 
   // ✅ Autofocus for text
   useEffect(() => {
@@ -107,9 +112,27 @@ function Whiteboard() {
       selectedToolType === tooltype.RUBBER ? "cell" : "default";
   }, [selectedToolType]);
 
+  // Cleanup RAF on unmount
+  useEffect(() => {
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, []);
+
   function mouseDownHandler(event) {
     const { clientX, clientY } = event;
     if (action === actions.WRITING) return;
+
+    // ✅ ERASER — handle on mouseDown for immediate, reliable feedback
+    if (selectedToolType === tooltype.RUBBER) {
+      const element = getElementPosition(clientX, clientY, elements);
+      if (element?.position === "INSIDE") {
+        const newElements = elements.filter((el) => el.id !== element.id);
+        dispatch(setElement(newElements));
+        CurrentStateEmit(newElements);
+      }
+      return;
+    }
 
     const start = { x1: clientX, y1: clientY, x2: clientX, y2: clientY };
 
@@ -153,15 +176,13 @@ function Whiteboard() {
   }
 
   function mouseUpHandler(e) {
-    const { clientX, clientY } = e;
-
     if (
       selectedEl &&
       (action === actions.DRAWING || action === actions.RESIZING)
     ) {
       const index = elements.findIndex((el) => el.id === selectedEl.id);
 
-      if ([tooltype.RECTANGLE, tooltype.LINE].includes(elements[index].type)) {
+      if (index !== -1 && [tooltype.RECTANGLE, tooltype.LINE].includes(elements[index]?.type)) {
         AdjustCoordinates(elements, dispatch, index);
       }
     }
@@ -173,81 +194,90 @@ function Whiteboard() {
   function mouseMoveHandler(event) {
     const { clientX, clientY } = event;
 
-    if (action === actions.DRAWING && selectedEl) {
-      const index = elements.findIndex((el) => el.id === selectedEl.id);
-      if (index !== -1) {
-        updateElement(
-          {
-            x1: elements[index].x1,
-            y1: elements[index].y1,
-            x2: clientX,
-            y2: clientY,
-            type: elements[index].type,
-            index,
-            id: elements[index].id,
-          },
-          elements,
-          dispatch
-        );
-      }
-    }
-
+    // ✅ Update cursor immediately (outside RAF) for responsiveness
     if (selectedToolType === tooltype.SELECTION) {
       const element = getElementPosition(clientX, clientY, elements);
       event.target.style.cursor = element
         ? GetCursortype(element.position)
         : "default";
+    }
 
-      if (action === actions.MOVING && selectedEl) {
+    // ✅ Throttle heavy state updates with requestAnimationFrame — capped at 60fps
+    if (rafRef.current) return;
+
+    rafRef.current = requestAnimationFrame(() => {
+      rafRef.current = null;
+
+      if (action === actions.DRAWING && selectedEl) {
         const index = elements.findIndex((el) => el.id === selectedEl.id);
         if (index !== -1) {
-          const { offSetx, offSety, x1, y1, x2, y2 } = selectedEl;
-          const width = x2 - x1;
-          const height = y2 - y1;
-          const newX1 = clientX - offSetx;
-          const newY1 = clientY - offSety;
-
           updateElement(
             {
-              x1: newX1,
-              y1: newY1,
-              x2: newX1 + width,
-              y2: newY1 + height,
-              type: selectedEl.type,
-              index,
-              id: selectedEl.id,
-              text: elements[index].text,
-            },
-            elements,
-            dispatch
-          );
-        }
-      }
-
-      if (action === actions.RESIZING && selectedEl?.type !== tooltype.TEXT) {
-        const index = elements.findIndex((el) => el.id === selectedEl.id);
-        if (index !== -1) {
-          const { x1, y1, x2, y2 } = Getelementcoordinates(
-            selectedEl,
-            clientX,
-            clientY
-          );
-          updateElement(
-            {
-              x1,
-              y1,
-              x2,
-              y2,
+              x1: elements[index].x1,
+              y1: elements[index].y1,
+              x2: clientX,
+              y2: clientY,
               type: elements[index].type,
               index,
-              id: selectedEl.id,
+              id: elements[index].id,
             },
             elements,
             dispatch
           );
         }
       }
-    }
+
+      if (selectedToolType === tooltype.SELECTION) {
+        if (action === actions.MOVING && selectedEl) {
+          const index = elements.findIndex((el) => el.id === selectedEl.id);
+          if (index !== -1) {
+            const { offSetx, offSety, x1, y1, x2, y2 } = selectedEl;
+            const width = x2 - x1;
+            const height = y2 - y1;
+            const newX1 = clientX - offSetx;
+            const newY1 = clientY - offSety;
+
+            updateElement(
+              {
+                x1: newX1,
+                y1: newY1,
+                x2: newX1 + width,
+                y2: newY1 + height,
+                type: selectedEl.type,
+                index,
+                id: selectedEl.id,
+                text: elements[index].text,
+              },
+              elements,
+              dispatch
+            );
+          }
+        }
+
+        if (action === actions.RESIZING && selectedEl?.type !== tooltype.TEXT) {
+          const index = elements.findIndex((el) => el.id === selectedEl.id);
+          if (index !== -1) {
+            const coords = Getelementcoordinates(selectedEl, clientX, clientY);
+            if (coords) {
+              const { x1, y1, x2, y2 } = coords;
+              updateElement(
+                {
+                  x1,
+                  y1,
+                  x2,
+                  y2,
+                  type: elements[index].type,
+                  index,
+                  id: selectedEl.id,
+                },
+                elements,
+                dispatch
+              );
+            }
+          }
+        }
+      }
+    });
   }
 
   function handleBlurEvent(e) {
@@ -276,19 +306,6 @@ function Whiteboard() {
 
     setAction(null);
     setSelectedElement(null);
-  }
-
-  function mouseClickHandler(event) {
-    const { clientX, clientY } = event;
-
-    if (selectedToolType === tooltype.RUBBER) {
-      const element = getElementPosition(clientX, clientY, elements);
-      if (element?.position === "INSIDE") {
-        const newElements = elements.filter((el) => el.id !== element.id);
-        dispatch(setElement(newElements));
-        CurrentStateEmit(newElements);
-      }
-    }
   }
 
   return (
@@ -348,7 +365,6 @@ function Whiteboard() {
         onMouseDown={mouseDownHandler}
         onMouseUp={mouseUpHandler}
         onMouseMove={mouseMoveHandler}
-        onClick={mouseClickHandler}
         style={{
           width: "100%",
           height: "100%",

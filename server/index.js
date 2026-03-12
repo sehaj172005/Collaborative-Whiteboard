@@ -10,15 +10,26 @@ const mongodb_url = process.env.MONGODB_URL;
 
 const app = express();
 const server = http.createServer(app);
+const allowedOrigins = [
+  "http://localhost:5173", // Local frontend
+  "https://collaborative-whiteboard-hv0h.onrender.com", // If serving frontend from same backend
+  process.env.FRONTEND_URL, // Dynamic exact frontend URL
+].filter(Boolean);
+
 const io = new Server(server, {
   cors: {
-    origin: "*",
-    methods: ["GET", "POST"],
+    origin: allowedOrigins,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
   },
 });
 
 app.use(express.json());
-app.use(cors({ origin: "*", methods: ["GET", "POST"] }));
+app.use(cors({
+  origin: allowedOrigins,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
 
 // Import Routes
 const Userroutes = require("./routes/user");
@@ -28,11 +39,8 @@ app.use("/user", Userroutes);
 const roomElementsMap = new Map();
 
 io.on("connection", (socket) => {
-  console.log(`[+] Connected: ${socket.id}`);
-
   socket.on("join-room", (roomId) => {
     socket.join(roomId);
-    console.log(`${socket.id} joined room ${roomId}`);
 
     const elements = roomElementsMap.get(roomId) || [];
     socket.emit("receive-whiteboard-state", elements);
@@ -57,18 +65,24 @@ io.on("connection", (socket) => {
     socket.to(roomId).emit("receive-whiteboard-state", elements);
   });
 
-  socket.on("disconnect", () => {
-    console.log(`[-] Disconnected: ${socket.id}`);
-  });
+  socket.on("disconnect", () => { });
 });
 
+// Global Error Handler
+app.use((err, req, res, next) => {
+  console.error("Global error:", err.message);
+  res.status(500).json({ error: "Something failed internally." });
+});
 
 const PORT = process.env.PORT || 3000;
 
 async function main() {
-  await mongoose.connect(mongodb_url).then(() => {
+  await mongoose.connect(mongodb_url, {
+    serverSelectionTimeoutMS: 5000,
+    socketTimeoutMS: 45000,
+  }).then(() => {
     console.log("✅ Connected to MongoDB");
-  });
+  })
 
   server.listen(PORT, () => {
     console.log(`🚀 Server running at http://localhost:${PORT}`);
